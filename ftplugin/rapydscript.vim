@@ -34,22 +34,24 @@ endfunction
 
 if !exists("g:loaded_ale_rapydscript_rapydscript_checker")
     let g:loaded_ale_rapydscript_rapydscript_checker = 1
-    try
-        call g:ale#linter#Define('rapydscript', {
-            \ 'name': 'rapydscript',
-            \ 'callback': function('s:ale_linters_rapydscript_lint_handle'),
-            \ 'executable': 'rapydscript',
-            \ 'command': 'rapydscript lint --errorformat json --stdin-filename %s -',
-            \})
-    catch /^Vim\%((\a\+)\)\=:E117:/ 
-    endtry
+    if !has('nvim')
+	    try
+		call g:ale#linter#Define('rapydscript', {
+		    \ 'name': 'rapydscript',
+		    \ 'callback': function('s:ale_linters_rapydscript_lint_handle'),
+		    \ 'executable': 'rapydscript',
+		    \ 'command': 'rapydscript lint --errorformat json --stdin-filename %s -',
+		    \})
+	    catch /^Vim\%((\a\+)\)\=:E117:/
+	    endtry
+    endif
 endif
 
 " jump to variable/function definition, also finds variables declared in groups (implicit tuples)
-nnoremap ,d ?\(\(global\\|nonlocal\) (\{0,1\}[^=(]*.\\|def \)\><CR>
+nnoremap <leader>d ?\(\(global\\|nonlocal\) (\{0,1\}[^=(]*.\\|def \)\><CR>
 
 " jump to previous variable assignment (var= | var+= | var||= | etc)
-nnoremap ,= ?\(\([ ]*,[ ]*$[a-z][a-z0-9]*[ ]*\)*)\)\{0,1\}\s*\([-+*/%.\|&x^]\\|\(\*\*\\|\|\|\\|>>\\|<<\)\)\{0,1\}=[^=]<CR>``0n<Right>
+nnoremap <leader>= ?\(\([ ]*,[ ]*$[a-z][a-z0-9]*[ ]*\)*)\)\{0,1\}\s*\([-+*/%.\|&x^]\\|\(\*\*\\|\|\|\\|>>\\|<<\)\)\{0,1\}=[^=]<CR>``0n<Right>
 
 " comment/uncomment (already part of my main .vimrc)
 "map ,# :s_^_#_<CR>:noh<CR>
